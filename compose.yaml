@@ -1,0 +1,31 @@
+services:
+  honoAppServer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: node:22
+    working_dir: /app
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://postgres:azumax1000@db:5432/nn-plase?schema=public"
+
+  db:
+    image: postgres:16.1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: azumax1000
+      POSTGRES_DB: nn-plase
+      TZ: "Asia/Tokyo"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
