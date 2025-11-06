@@ -8,7 +8,7 @@ import { Server } from 'socket.io';
 const app = new Hono();
 const port = 3000;
 const canvasSize =1000;
-const intervalTime = 0;
+const intervalTime = 60000;
 const interval = {};
 let pixelCanvasData
 app.use('/assets/*', serveStatic({ root: './client/dist' }));
@@ -40,7 +40,6 @@ async function resCanvasData(newData) {
 }
 setInterval(() => {
   for (const [name, data] of Object.entries(interval)) {
-    resCanvasData(pixelCanvasData);
     if (data.theSavedTime < Date.now()) {
       delete interval[name];
     }
@@ -50,13 +49,17 @@ io.on('connection', (socket) => {
   socket.on('paintEventOn', async({ posData, name }) => {
     if (interval[name]?.theSavedTime) {
       if (interval[name].theSavedTime > Date.now()) {
+        console.log(233543)
+        io.to(socket.id).emit("still");
         return;
       }
     } else {
       interval[name] = {};
     }
     interval[name].theSavedTime = Date.now() + intervalTime;
-    pixelCanvasData[posData.x][posData.y] = posData.color;
+    pixelCanvasData[posData.y][posData.x] = posData.color;
+    resCanvasData(JSON.stringify(pixelCanvasData));
+    console.log(posData)
     io.emit('paintEventApplicable', { posData });
   });
   io.to(socket.id).emit("canvasData", JSON.stringify(pixelCanvasData));
@@ -112,6 +115,15 @@ app.get('/api/me', (c) => {
   const userSub = getCookie(c, 'userSub')
   if (!userSub) return c.json({ error: 'Not logged in' }, 401)
   return c.json({ sub: userSub })
+})
+
+app.get('/api/logout', (c) => {
+  setCookie(c, 'userSub', '', {
+    path: '/',          
+    httpOnly: true,      
+    expires: new Date(0) 
+  })
+  return c.json({ message: 'Logged out' })
 })
 
 

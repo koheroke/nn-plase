@@ -1,6 +1,9 @@
 <template>
   <canvas ref="canvasRef" class="canvasClass" @click="clickCanvas"></canvas>
   <colorParet @sendColor="sendColorFunc" />
+  <div class="logout">
+    <logout />
+  </div>
   <div class="login">
     <Login @sendSub="sendSubFunc" />
   </div>
@@ -8,13 +11,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import Login from "./login.vue";
+import logout from "./logout.vue";
 import colorParet from "./colorParet.vue";
 import io from "socket.io-client";
 import { setCTX } from "../js_modules/canvasModules.js";
 import { updeteCTX } from "../js_modules/canvasModules.js";
 const canvasRef = ref(null);
 const socket = io("http://localhost:3000");
-const pixelSize = 50;
+const pixelSize = 10;
 const canvasSize = 1000;
 let name = undefined;
 let color = undefined;
@@ -26,10 +30,12 @@ function sendSubFunc(data) {
 function sendColorFunc(data) {
   color = data.value;
 }
+socket.on("still", () => {
+  alert("次塗れるのは1分後です");
+});
 
 function clickCanvas() {
   if (posData.color != undefined && name != undefined && color != undefined) {
-    console.log(posData);
     socket.emit("paintEventOn", {
       posData: posData,
       name: name,
@@ -56,29 +62,26 @@ onMounted(() => {
     const rect = e.target.getBoundingClientRect();
     posData.x = Math.floor((e.clientX - rect.left) / pixelSize);
     posData.y = Math.floor((e.clientY - rect.top) / pixelSize);
-    console.log(JSON.stringify(posData));
     posData.color = color;
   });
 });
-//カラーパレットUI
-//ログイン画面UI
-//ロード画面UI
-//メイン画面UI
-//db永続化
 </script>
 <style scoped>
 .canvasClass {
-  width: 1000vw;
-  height: 100vh;
+  width: 1000;
+  height: 1000;
   position: relative;
   background-color: rgb(0, 0, 0);
 }
 .login {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  top: 50vh;
-  left: 50vw;
-  width: 100px;
-  height: auto;
+  position: fixed;
+  top: 0vh;
+  left: 0vw;
+  z-index: 20;
+}
+.logout {
+  position: fixed;
+  top: 0%;
+  right: 0;
 }
 </style>

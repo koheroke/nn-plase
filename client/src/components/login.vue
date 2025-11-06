@@ -1,9 +1,29 @@
 <template>
-  <div v-show="boxShow">
-    <button @click="login">Googleでログイン</button>
+  <div class="bord" v-show="boxShow">
+    <div class="login">
+      <button @click="login">Googleでログイン</button>
+    </div>
   </div>
 </template>
+<style scoped>
+.bord {
+  position: fixed;
+  top: 0vh;
+  left: 0vw;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.428);
+}
 
+.login {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 50vh;
+  left: 50vw;
+  width: 200px;
+  height: auto;
+}
+</style>
 <script setup>
 import { onMounted, ref } from "vue";
 const params = new URLSearchParams(window.location.search);

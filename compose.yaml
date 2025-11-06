@@ -24,8 +24,12 @@ services:
       POSTGRES_PASSWORD: azumax1000
       POSTGRES_DB: nn-plase
       TZ: "Asia/Tokyo"
+    volumes:
+      - ../nn-plase-db:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 3s
       retries: 5
+
+
