@@ -34,9 +34,11 @@ async function getCanvasData() {
   }
   return JSON.parse(canvas.data);
 }
-(async () => {
+async function initCanvas() {
   pixelCanvasData = await getCanvasData();
-})();
+  console.log('Canvas data initialized');
+}
+await initCanvas();
 async function resCanvasData(newData) {
   await prisma.pixelCanvas.upsert({
     where: { id: 1 },
