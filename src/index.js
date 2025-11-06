@@ -120,12 +120,10 @@ io.on('connection', (socket) => {
       io.to(socket.id).emit('still');
       return;
     }
-
     interval[name] = { theSavedTime: Date.now() + intervalTime };
     pixelCanvasData[posData.y][posData.x] = posData.color;
-    await resCanvasData(JSON.stringify(pixelCanvasData));
-
     io.emit('paintEventApplicable', { posData });
+    await resCanvasData(JSON.stringify(pixelCanvasData));
   });
 
   io.to(socket.id).emit('canvasData', JSON.stringify(pixelCanvasData));
