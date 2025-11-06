@@ -6,10 +6,14 @@ import { PrismaClient } from '@prisma/client';
 import os from 'node:os';
 import { Server } from 'socket.io';
 const app = new Hono();
-const port = 3000;
+const port =  process.env.PORT || 3000;
 const canvasSize =1000;
 const intervalTime = 60000;
 const interval = {};
+const clientSecret = process.env.clientSecret
+const clientId = process.env.clientID
+const redirectUri = process.env.redirectUri
+const frontEndUri = process.env.frontEndUri
 let pixelCanvasData
 app.use('/assets/*', serveStatic({ root: './client/dist' }));
 app.get('/', serveStatic({ path: './client/dist/index.html' }));
@@ -18,6 +22,8 @@ const server = serve({
   port,
 });
 const io = new Server(server);
+
+
 const prisma = new PrismaClient({ log: ['query'] });
 async function getCanvasData() {
   const canvas = await prisma.pixelCanvas.findUnique({
@@ -65,11 +71,6 @@ io.on('connection', (socket) => {
   io.to(socket.id).emit("canvasData", JSON.stringify(pixelCanvasData));
 });
 
-
-const clientSecret = process.env.clientSecret
-const clientId = process.env.clientID
-const redirectUri = process.env.redirectUri
-const frontEndUri = process.env.frontEndUri
 app.get('/api/auth', (c) => {
   const url = new URL('https://accounts.google.com/o/oauth2/v2/auth')
   url.searchParams.set('client_id', clientId ?? 'NONE')
