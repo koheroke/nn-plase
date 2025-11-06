@@ -42,7 +42,6 @@ async function fetchUserSub() {
 
 onMounted(async () => {
   const userSub = await fetchUserSub();
-  console.log("userSub" + userSub);
   if (userSub != null) {
     boxShow.value = false;
     emit("sendSub", { value: userSub });

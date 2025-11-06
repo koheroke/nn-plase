@@ -25,7 +25,7 @@ async function logoutFunc() {
       credentials: "include",
     });
     if (res.ok) {
-      window.location.href = "http://localhost:3000/";
+      window.location.href = "https://nn-plase.onrender.com";
     } else {
       console.error("Logout failed");
     }

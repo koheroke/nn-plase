@@ -55,7 +55,6 @@ io.on('connection', (socket) => {
   socket.on('paintEventOn', async({ posData, name }) => {
     if (interval[name]?.theSavedTime) {
       if (interval[name].theSavedTime > Date.now()) {
-        console.log(233543)
         io.to(socket.id).emit("still");
         return;
       }
@@ -65,7 +64,6 @@ io.on('connection', (socket) => {
     interval[name].theSavedTime = Date.now() + intervalTime;
     pixelCanvasData[posData.y][posData.x] = posData.color;
     resCanvasData(JSON.stringify(pixelCanvasData));
-    console.log(posData)
     io.emit('paintEventApplicable', { posData });
   });
   io.to(socket.id).emit("canvasData", JSON.stringify(pixelCanvasData));
